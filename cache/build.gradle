@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    testOptions.unitTests.includeAndroidResources = true
+    defaultConfig {
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion buildToolsVersion
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    libraryVariants.all {
+        it.generateBuildConfig.enabled = false
+    }
+}
+
+dependencies {
+    compileOnly cacheDependencies.javaxAnnotations
+    implementation project(':data')
+    implementation cacheDependencies.dagger
+    implementation cacheDependencies.gson
+    implementation cacheDependencies.rxKotlin
+    implementation cacheDependencies.kotlin
+    implementation cacheDependencies.javaxAnnotations
+    implementation cacheDependencies.javaxInject
+    implementation cacheDependencies.androidAnnotations
+    implementation cacheDependencies.roomRuntime
+    implementation cacheDependencies.roomRxJva
+    implementation cacheDependencies.appCompat
+    testImplementation cacheTestDependencies.junit
+    testImplementation cacheTestDependencies.assertJ
+    testImplementation cacheTestDependencies.kotlinJUnit
+    testImplementation cacheTestDependencies.mockitoKotlin
+    testImplementation cacheTestDependencies.roomTesting
+    testImplementation cacheTestDependencies.archTesting
+    testImplementation cacheTestDependencies.testRunner
+    testImplementation cacheTestDependencies.testRules
+    testImplementation cacheTestDependencies.testCore
+    testImplementation cacheTestDependencies.robolectric
+    kapt cacheDependencies.daggerCompiler
+    kapt cacheDependencies.roomCompiler
+}

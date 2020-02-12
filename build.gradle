@@ -1,0 +1,87 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.LibraryPlugin
+
+buildscript {
+    apply from: 'dependencies.gradle'
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        //noinspection GradleDependency
+        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta02'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply from: 'dependencies.gradle'
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        /*glide snapshot repo*/
+        maven {
+            name 'glide-snapshot'
+            url 'http://oss.sonatype.org/content/repositories/snapshots'
+        }
+        jcenter()
+    }
+
+    tasks.withType(JavaCompile).all {
+        options.compilerArgs += [
+                '-Adagger.formatGeneratedSource=disabled',
+                '-Adagger.gradle.incremental'
+        ]
+    }
+    afterEvaluate {
+        def kapt = extensions.findByName('kapt')
+        if (kapt != null) {
+            kapt.arguments {
+                arg("dagger.formatGeneratedSource", "disabled")
+            }
+        }
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs += [
+                    '-progressive'
+            ]
+        }
+    }
+
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            events "started", "skipped", "passed", "failed"
+            showStandardStreams true
+        }
+    }
+
+    // Disable BuildConfig generation for Android library modules so javac can be skipped altogether.
+    plugins.whenPluginAdded {
+        if (it instanceof LibraryPlugin) {
+            extensions.getByType(LibraryExtension).libraryVariants.all {
+                it.generateBuildConfig.enabled = false
+            }
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.force "androidx.annotation:annotation:$axAnnotation"
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

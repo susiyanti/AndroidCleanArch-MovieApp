@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="favorited_movies">Favorite Movie</string>
+    <string name="title_favorited">Favorite</string>
+    <string name="favorited">favorite</string>
+    <string name="poster">poster</string>
+</resources>
